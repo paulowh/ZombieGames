@@ -42,6 +42,11 @@ public class WeaponFPS : MonoBehaviour
 
         if (Physics.Raycast(ray, out hit, range, hitLayers))
         {
+            if (hit.transform.tag == "Inimigo")
+            {
+                Destroy(hit.collider.gameObject);
+            }
+
             Debug.Log("Acertou: " + hit.transform.name);
 
             // 3. Aplicar dano se o alvo tiver o script de saúde
