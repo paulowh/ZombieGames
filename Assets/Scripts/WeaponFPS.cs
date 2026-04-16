@@ -1,4 +1,7 @@
+using Unity.VisualScripting;
 using UnityEngine;
+using UnityEngine.SceneManagement;
+using UnityEngineInternal;
 
 /// <summary>
 /// Gerencia a lógica de disparo usando Raycast a partir do centro da câmera.
@@ -10,6 +13,9 @@ public class WeaponFPS : MonoBehaviour
     [SerializeField] private float damage = 10f;
     [SerializeField] private float range = 100f;
     [SerializeField] private LayerMask hitLayers; // Define o que pode ser atingido (Zumbis, Paredes)
+    [SerializeField] private GameObject bulletPrefab; // Objeto da Bala
+    [SerializeField] private Transform firePoint; // Ponta da Arma
+
 
     [Header("Efeitos Visuais")]
     [SerializeField] private ParticleSystem muzzleFlash; // Fogo na ponta da arma
@@ -29,12 +35,24 @@ public class WeaponFPS : MonoBehaviour
     /// <summary>
     /// Método chamado pelo UnityEvent do PlayerController.
     /// </summary>
+    private int box = 0;
     public void Shoot()
     {
         // 1. Efeito visual na arma (opcional)
         if (muzzleFlash != null) muzzleFlash.Play();
 
-        // 2. Lógica do Raycast
+        // 2. Efeito visual/tiro da bala
+        if (bulletPrefab != null)
+        {
+
+            GameObject bullet = Instantiate(bulletPrefab, firePoint.position, firePoint.rotation);
+
+            //Rigidbody rb = bullet.GetComponent<Rigidbody>();
+            //rb.AddForce(firePoint.forward * 20f, ForceMode.Impulse);
+
+        }
+
+        // 3. Lógica do Raycast
         // O raio sai do centro da visão (Viewport 0.5, 0.5)
         Ray ray = mainCamera.ViewportPointToRay(new Vector3(0.5f, 0.5f, 0));
         Debug.DrawRay(ray.origin, ray.direction * range, Color.red, 2f);
@@ -45,14 +63,22 @@ public class WeaponFPS : MonoBehaviour
             if (hit.transform.tag == "Inimigo")
             {
                 Destroy(hit.collider.gameObject);
+                box++;
+            }
+
+            if (box >= 3)
+            {
+
+                SceneManager.LoadScene(0);
+                box = 0;
             }
 
             Debug.Log("Acertou: " + hit.transform.name);
 
-            // 3. Aplicar dano se o alvo tiver o script de saúde
+            // 4. Aplicar dano se o alvo tiver o script de saúde
             // Exemplo: hit.transform.GetComponent<ZombieHealth>()?.TakeDamage(damage);
 
-            // 4. Criar um efeito no ponto de impacto (faísca, buraco de bala)
+            // 5. Criar um efeito no ponto de impacto (faísca, buraco de bala)
             if (impactEffectPrefab != null)
             {
                 Instantiate(impactEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
