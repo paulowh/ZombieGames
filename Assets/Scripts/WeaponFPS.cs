@@ -1,6 +1,7 @@
 using Unity.VisualScripting;
 using UnityEngine;
 using UnityEngine.SceneManagement;
+using UnityEngine.UIElements;
 using UnityEngineInternal;
 
 /// <summary>
@@ -76,13 +77,6 @@ public class WeaponFPS : MonoBehaviour
                 box++;
             }
 
-            if (box >= 3)
-            {
-
-                SceneManager.LoadScene(0);
-                box = 0;
-            }
-
             Debug.Log("Acertou: " + hit.transform.name);
 
             // 4. Aplicar dano se o alvo tiver o script de saúde
@@ -94,5 +88,8 @@ public class WeaponFPS : MonoBehaviour
                 Instantiate(impactEffectPrefab, hit.point, Quaternion.LookRotation(hit.normal));
             }
         }
+
+
     }
+
 }
