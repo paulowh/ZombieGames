@@ -20,6 +20,12 @@ public class WeaponFPS : MonoBehaviour
     [Header("Efeitos Visuais")]
     [SerializeField] private ParticleSystem muzzleFlash; // Fogo na ponta da arma
     [SerializeField] private GameObject impactEffectPrefab; // Faísca/Sangue no local do impacto
+    
+    [Header("Efeitos Sonoros")]
+    [SerializeField] private AudioClip audioClip;
+    private AudioSource audioSource;
+
+
     #endregion
 
     #region Referências
@@ -30,6 +36,8 @@ public class WeaponFPS : MonoBehaviour
     {
         // Pega a câmera principal para disparar o raio do centro dela
         mainCamera = Camera.main;
+        audioSource = GetComponent<AudioSource>();
+        audioSource.playOnAwake = false;
     }
 
     /// <summary>
@@ -40,6 +48,8 @@ public class WeaponFPS : MonoBehaviour
     {
         // 1. Efeito visual na arma (opcional)
         if (muzzleFlash != null) muzzleFlash.Play();
+
+        if (audioSource != null && audioClip != null) audioSource.PlayOneShot(audioClip);   
 
         // 2. Efeito visual/tiro da bala
         if (bulletPrefab != null)
